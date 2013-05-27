@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.startup">
+   </extension>
+   <extension point="org.eclipse.core.resources.markers"   
+        id="advicemarker" 
+        name="Advice Marker" >
+     <super type="org.eclipse.core.resources.textmarker"/>         
+     <persistent value="true"/>
+  </extension>
+  
+  <extension
+   	      id="afteradvicemarker"
+   	      name="After Advice Marker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="AjdtPlugin.advicemarker">
+      </super>
+      <persistent value="true">
+      </persistent>
+  </extension>
+  
+  <extension point="org.eclipse.ui.editors.annotationTypes">
+     <type
+        super="org.eclipse.ajdt.advice"
+        markerType="AjdtPlugin.afteradvicemarker"
+        name="AjdtPlugin.afterAdvice"/>
+  </extension>
+
+  <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+     <specification 
+        annotationType="AjdtPlugin.afterAdvice"
+        icon="icons/structure/after.gif"/>
+  </extension>
+  
+  <extension
+   	      id="beforeadvicemarker"
+   	      name="Before Advice Marker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="AjdtPlugin.advicemarker">
+      </super>
+      <persistent value="true">
+      </persistent>
+  </extension>
+  
+  <extension point="org.eclipse.ui.editors.annotationTypes">
+     <type
+        super="org.eclipse.ajdt.advice"
+        markerType="AjdtPlugin.beforeadvicemarker"
+        name="AjdtPlugin.beforeAdvice"/>
+  </extension>
+
+  <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+     <specification 
+        annotationType="AjdtPlugin.beforeAdvice"
+        icon="icons/structure/before.gif"/>
+  </extension>
+  
+  
+  <extension
+   	      id="afterexadvicemarker"
+   	      name="Before Advice Marker"
+   	      point="org.eclipse.core.resources.markers">
+      <super
+            type="AjdtPlugin.advicemarker">
+      </super>
+      <persistent value="true">
+      </persistent>
+  </extension>
+  
+  <extension point="org.eclipse.ui.editors.annotationTypes">
+     <type
+        super="org.eclipse.ajdt.advice"
+        markerType="AjdtPlugin.afterexadvicemarker"
+        name="AjdtPlugin.afterExAdvice"/>
+  </extension>
+
+  <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+     <specification 
+        annotationType="AjdtPlugin.afterExAdvice"
+        icon="icons/structure/afterex.gif"/>
+  </extension>
+</plugin>

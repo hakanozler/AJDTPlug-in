@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: AjdtPlugin
+Bundle-SymbolicName: AjdtPlugin;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: ajdtplugin.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ajdt.core;bundle-version="2.2.2",
+ org.eclipse.core.resources;bundle-version="3.8.1",
+ org.eclipse.jdt.core;bundle-version="3.8.2",
+ org.eclipse.aspectj;bundle-version="2.2.2",
+ org.eclipse.equinox.weaving.aspectj;bundle-version="1.0.100",
+ org.eclipse.ajdt.ui;bundle-version="2.2.2"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
