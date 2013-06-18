@@ -1,5 +1,6 @@
 package ajdtplugin;
 
+import java.awt.font.TextAttribute;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +35,8 @@ import com.adviceConstructs.AdviceAfter;
 import com.adviceConstructs.AdviceAfterThrowing;
 import com.adviceConstructs.AdviceBefore;
 import com.declarations.MarkerText;
+import org.eclipse.jdt.internal.ui.javaeditor.*;
+import org.eclipse.jdt.internal.ui.javaeditor.SemanticHighlightingManager.HighlightedRange;
 
 public class MyBuildListener implements IAJBuildListener {
 	
@@ -49,7 +52,7 @@ public class MyBuildListener implements IAJBuildListener {
 		}
 //		System.out.println(kind+"***");// kind = 9 : an automatic build request
 		// Called whenever an AspectJ project is built..
-		System.out.println("\nBegin...");
+//		System.out.println("\nBegin...");
 		
 		AJProjectModelFacade model = AJProjectModelFactory.getInstance().getModelForProject(project);
 		AJRelationshipType[] relTypes = { AJRelationshipManager.ADVISED_BY };
@@ -73,9 +76,9 @@ public class MyBuildListener implements IAJBuildListener {
 			List<IRelationship> rels = (List<IRelationship>) model.getRelationshipsForProject(relTypes);
 			for (IRelationship rel : rels) {
 				
-				System.out.println();				
+//				System.out.println();				
 //				AjNaiveASTFlattener visitor = null;				
-				System.out.println("AspectJ relation: ");
+//				System.out.println("AspectJ relation: ");
 				
 				for (String targetHandle : (Iterable<String>) rel.getTargets()) {
 					
@@ -87,23 +90,23 @@ public class MyBuildListener implements IAJBuildListener {
 					CompilationUnit cu3 = compileAst(target);
 					cu3.accept(visitor);
 					
-					System.out.println("Target:");
-					System.out.println(visitor.getResult());
+//					System.out.println("Target:");
+//					System.out.println(visitor.getResult());
 					
-					if (visitor.instAfter != null) {
+					if (visitor.instAfter != null && target.getElementName().equals(visitor.instAfter.getAdviceName())) {
 						visitor.instAfter.setAdviceFileName(target.getResource().getLocation().toFile().getName());
 						visitor.instAfter.setAdviceLineNumber(model.getJavaElementLineNumber(target));
 						visitor.instAfter.setSourceLineNumber(model.getJavaElementLineNumber(source));
 						visitor.instAfter.setSourceElementName(source.getElementName());
 					}
-					else if(visitor.instBefore != null){
+					else if(visitor.instBefore != null && target.getElementName().equals(visitor.instBefore.getAdviceName())){
 						visitor.instBefore.setAdviceFileName(target.getResource().getLocation().toFile().getName());
 						visitor.instBefore.setAdviceLineNumber(model.getJavaElementLineNumber(target));
 						visitor.instBefore.setSourceLineNumber(model.getJavaElementLineNumber(source));
 						visitor.instBefore.setSourceElementName(source.getElementName());
 						visitor.instBefore.setPointcuts(visitor.points);
 					}
-					else if (visitor.instAftThrow != null) {
+					else if (visitor.instAftThrow != null && target.getElementName().equals(visitor.instAftThrow.getAdviceName())) {
 						visitor.instAftThrow.setAdviceFileName(target.getResource().getLocation().toFile().getName());
 						visitor.instAftThrow.setAdviceLineNumber(model.getJavaElementLineNumber(target));
 						visitor.instAftThrow.setSourceLineNumber(model.getJavaElementLineNumber(source));
@@ -116,20 +119,23 @@ public class MyBuildListener implements IAJBuildListener {
 					visitor.setFile(source.getResource().getLocation().toFile());
 					cu2.accept(visitor);
 					
-					System.out.println("Source:");
-					System.out.println(visitor.getResult());
+//					System.out.println("Source:");
+//					System.out.println(visitor.getResult());
 					
 					switch (kind) {		                
 		            case IncrementalProjectBuilder.AUTO_BUILD:
 		            case IncrementalProjectBuilder.INCREMENTAL_BUILD:
-						if (visitor.instAfter != null) {
+						if (visitor.instAfter != null && target.getElementName().equals(visitor.instAfter.getAdviceName())) {
 							createMarker(project,source.getResource(),visitor.instAfter);
+							visitor.instAfter = null;
 						}
-						else if(visitor.instBefore != null){
+						else if(visitor.instBefore != null && target.getElementName().equals(visitor.instBefore.getAdviceName())){
 							createMarker(project,source.getResource(),visitor.instBefore);
+							visitor.instBefore=null;
 						}
-						else if(visitor.instAftThrow != null){
+						else if(visitor.instAftThrow != null && target.getElementName().equals(visitor.instAftThrow.getAdviceName())){
 							createMarker(project,source.getResource(),visitor.instAftThrow);
+							visitor.instAftThrow=null;
 						}
 						break;
 					}
@@ -168,9 +174,7 @@ public class MyBuildListener implements IAJBuildListener {
         	
             marker.setAttribute(IMarker.LINE_NUMBER, advice.getSourceLineNumber());
             marker.setAttribute(IMarker.MESSAGE, label);
-            marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);   
-            
-            
+            marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
         }
         catch (CoreException e) {
         }        
@@ -202,10 +206,11 @@ public class MyBuildListener implements IAJBuildListener {
                     IAJModelMarker.DECLARATION_MARKER, true,
                     IResource.DEPTH_INFINITE);       
        
-            if(check){
-	            project.deleteMarkers(IAJModelMarker.CUSTOM_MARKER,
-	                    true, IResource.DEPTH_INFINITE);                
+            
+	        project.deleteMarkers(IAJModelMarker.CUSTOM_MARKER,
+	        		true, IResource.DEPTH_INFINITE);                
 	        
+	        if(check){
 	            project.deleteMarkers("AjdtPlugin.afteradvicemarker",
 	                    true, IResource.DEPTH_INFINITE);
 	            

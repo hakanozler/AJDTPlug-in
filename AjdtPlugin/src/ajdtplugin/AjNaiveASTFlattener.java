@@ -1225,6 +1225,7 @@ public class AjNaiveASTFlattener extends AjASTVisitor {
 		//save HAKAN
 		//for source code. 
 		//
+//		System.out.println("********"+methodlineNumber);
 		if (this.instAfter != null && methodlineNumber > 0) {
 //			for (VariableDeclaration dec : this.instAfter.getDeclaration()) {
 				if(instAfter.getSourceLineNumber() == methodlineNumber){
@@ -1236,10 +1237,18 @@ public class AjNaiveASTFlattener extends AjASTVisitor {
 //				}
 //			}
 		}
-		else if(this.instAftThrow != null && methodlineNumber > 0){
+		
+		if(this.instAftThrow != null && methodlineNumber > 0){
 			if(instAftThrow.getSourceLineNumber() == methodlineNumber){
 				invoke.MethodInvocationLineNumber = methodlineNumber;
 				this.instAftThrow.getMethodInvoke().add(invoke);
+			}
+		}
+		
+		if(this.instBefore != null && methodlineNumber > 0){
+			if(instBefore.getSourceLineNumber() == methodlineNumber){
+				invoke.MethodInvocationLineNumber = methodlineNumber;
+				this.instBefore.getMethodInvoke().add(invoke);
 			}
 		}
 //		else{
@@ -1949,6 +1958,12 @@ public class AjNaiveASTFlattener extends AjASTVisitor {
 
 		if (this.instAfter != null) {
 			this.instAfter.getDeclaration().add(dec);
+		}
+		if (this.instBefore != null) {
+			this.instBefore.getDeclaration().add(dec);
+		}
+		if (this.instAftThrow != null) {
+			this.instAftThrow.getDeclaration().add(dec);
 		}
 		this.buffer.append("**;\n");//$NON-NLS-1$
 		return false;
